@@ -3,7 +3,7 @@ using RegistrationApi.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register DbContext with connection string
+// Registers correct connection string based on environment
 builder.Services.AddDbContext<Contexts>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// ✅ Enable Swagger always (regardless of environment)
+// Enable Swagger always (so it works in Production too)
 app.UseSwagger();
 app.UseSwaggerUI();
 

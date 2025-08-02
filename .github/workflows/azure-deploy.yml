@@ -1,36 +1,44 @@
-name: Deploy ASP.NET Core API to Azure
+﻿name: Build and Deploy ASP.NET Core App to Azure Web App
 
 on:
   push:
     branches:
       - main
 
+env:
+  AZURE_WEBAPP_NAME: student-api-auth-app     # 👈 Your Azure Web App name
+  DOTNET_VERSION: '8.0.x'                     # 👈 Use your .NET version
+  PROJECT_PATH: 'RegistrationApi/RegistrationApi.csproj'  # 👈 Path to your .csproj
+
 jobs:
   build-and-deploy:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: ⬇️ Checkout code
+      uses: actions/checkout@v3
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
+    - name: 🧰 Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore dependencies
-        run: dotnet restore
+    - name: 🔨 Restore dependencies
+      run: dotnet restore ${{ env.PROJECT_PATH }}
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
+    - name: ⚙️ Build
+      run: dotnet build ${{ env.PROJECT_PATH }} --configuration Release --no-restore
 
-      - name: Publish
-        run: dotnet publish -c Release -o publish_output
+    - name: 📦 Publish
+      run: dotnet publish ${{ env.PROJECT_PATH }} --configuration Release --output publish_output
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: student-api-auth-app   # <== your actual app name
-          slot-name: production
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: publish_output
+    - name: 🔐 Login to Azure using Service Principal
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: 🚀 Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        package: publish_output
