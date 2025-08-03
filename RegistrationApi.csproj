@@ -17,7 +17,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<!-- Updated SqlClient version to fix downgrade issue -->
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.6" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.4" />
 	</ItemGroup>
@@ -25,6 +24,12 @@
 	<ItemGroup>
 		<Folder Include="models\" />
 		<Folder Include="static\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="appsettings.Production.json">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 </Project>
